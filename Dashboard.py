@@ -58,8 +58,6 @@ data.dropna(inplace=True)
 # reformat date column to date datatype
 data['Date '] = pd.to_datetime(data['Date '], errors='coerce')
 
-
-
 # %%
 ### Combine monthly datasets, convert to datetime, set date as index 
 
