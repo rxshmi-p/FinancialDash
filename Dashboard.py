@@ -107,14 +107,6 @@ spent_by_month = res.resample('M').sum()
 #     fig = fig.add_trace(go.Scatter(x=df2["Date "], y=df2["Amount Spent "], name=type))
 
 # st.plotly_chart(fig, use_container_width=True)
-
-# graphs to show seasonal_decompose
-# Examined model for patterns:
-# Level (avg value in series) - increases and then drops  after a peak, seen pattern twice
-# Trend (increases, decreases, stays same over time)
-# Seasonal/Periodic
-# Cyclical (increase/decrease non-seasonal related, like business cycles)
-# Random/Irregular variations
 # %% 
 
 # add section to input csv 
