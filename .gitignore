@@ -1,0 +1,5 @@
+# Streamlit stuff
+.streamlit/secrets.toml
+
+# Ignore budget files 
+Budget files/
