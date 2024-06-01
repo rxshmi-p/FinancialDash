@@ -37,37 +37,26 @@ collection = connect_db()
 ### Importing Data
 # must update total months and new dataset name 
 
-path = '/Users/rashmipanse/Documents/Projects/Dashboard/Budget files'
-monthly_list = []
+path = '/Users/rashmipanse/Documents/Projects/FinancialDash/data.csv'
 
-for filename in os.listdir(path):
-    if filename.endswith('.csv'):
-        filepath = os.path.join(path, filename)
-        monthly_list.append(pd.read_csv(filepath))
+# for filename in os.listdir(path):
+#     if filename.endswith('.csv'):
+#         filepath = os.path.join(path, filename)
+#         monthly_list.append(pd.read_csv(filepath))
 
-# Concatenate all dataframes in the list into a single dataframe
-monthly = pd.concat(monthly_list, ignore_index=True)
+# # Concatenate all dataframes in the list into a single dataframe
+# monthly = pd.concat(monthly_list, ignore_index=True)
+data = pd.read_csv(path)
 
 #%%
 ### Cleaning Dataframes 
 
 # drop columns
-data = monthly.iloc[:, :5]
 data.dropna(inplace=True)
 
 # %% 
 # reformat date column to date datatype
-# months = {'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'June': 6, 'July': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12}
-# year=0
-# for df in monthly:
-#     year+=1
-#     for i in range(0,len(df['Date '])):
-#         day=list(df['Date '].iloc[i].split('-'))
-#         for month,val in months.items():
-#             if month == day[1]:
-#                 df['Date '].iloc[i] = day[0]+"/"+str(val)+"/"+names[year-1][-6:-4]
-data['Date '] = pd.to_datetime(data['Date '], format='%d-%b', errors='coerce')
-data['Date '] = data['Date '].apply(lambda x: x.replace(year=2021))
+data['Date '] = pd.to_datetime(data['Date '], errors='coerce')
 
 
 
@@ -88,7 +77,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.subheader("Total Amount Spent Over Time")
-    st.line_chart(res['Amount Spent '], use_container_width=True)
+    st.line_chart(res['Amount_Spent'], use_container_width=True)
 
 with col2:
     st.header("Total Spending by Type")
