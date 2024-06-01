@@ -13,11 +13,11 @@ from pymongo.server_api import ServerApi
 # %% 
 # Page Configuration 
 st.set_page_config(
-    page_title = 'Financial Dashboard',
+    page_title = 'Dashboard',
     layout = 'wide'
 )
 
-st.title('Financial Dashboard')
+st.title('💸 Financial Dashboard')
 st.sidebar.success('Selection Panel')
 
 # %% 
@@ -33,59 +33,101 @@ def connect_db():
 
 collection = connect_db()
 
-# %%
-### Importing Data
-# must update total months and new dataset name 
+# %% 
 
-path = '/Users/rashmipanse/Documents/Projects/FinancialDash/data.csv'
+# New data inputs 
+st.subheader("New Entry")
 
-# for filename in os.listdir(path):
-#     if filename.endswith('.csv'):
-#         filepath = os.path.join(path, filename)
-#         monthly_list.append(pd.read_csv(filepath))
+col1, col2, col3, col4 = st.columns(4)
 
-# # Concatenate all dataframes in the list into a single dataframe
-# monthly = pd.concat(monthly_list, ignore_index=True)
-data = pd.read_csv(path)
+with col1:
+    # Date input widget
+    selected_date = st.date_input(
+        "Select a date",
+        value=datetime.date.today(),
+        min_value=datetime.date(2020, 1, 1),
+        max_value=datetime.date.today()
+)
 
-#%%
-### Cleaning Dataframes 
+with col2:  
+    # Type of spending input dropdown 
+    type_spending = st.selectbox("Type of spending", ['Groceries', 'Motives', 'Takeout', 'School', 'Misc.', 'Shopping', 'Gifts', 'Subscriptions', 'Travel'])
 
-# drop columns
-data.dropna(inplace=True)
+with col3: 
+    # Amount spent input 
+    amount_spent = st.number_input("Amount spent", min_value=0.00, max_value=10000.00, value=0.00, step=0.01)
+
+with col4:
+    # toggle between credit or debit 
+    payment_type = st.radio("Payment type", ['Credit', 'Debit'])
+
+# Save data to MongoDB
+if st.button("Save Entry"):
+    data = {
+        "date": selected_date.isoformat(),
+        "type_spending": type_spending,
+        "amount_spent": amount_spent,
+        "payment_type": payment_type
+    }
+    collection.insert_one(data)
+    st.success("Entry saved to the database!")
 
 # %% 
-# reformat date column to date datatype
-data['Date '] = pd.to_datetime(data['Date '], errors='coerce')
 
-# %%
-### Combine monthly datasets, convert to datetime, set date as index 
+# add section to input csv 
+st.subheader("CSV File Uploader")
 
-res = data.set_index('Date ').sort_index()
+# File uploader
+uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 
-if st.checkbox('Show model data'):
-    st.subheader('Model data')
-    st.write(res)
+if uploaded_file is not None:
+    # Read the CSV file
+    newdata = pd.read_csv(uploaded_file)
+    # Example: Display the first few rows
+    if st.button("Save CSV to MongoDB"):
+        data = []
+        for index, row in newdata.iterrows():
+            data.append({
+                "date": row[0],
+                "description": row[1],
+                "type_spending": row[2],
+                "amount_spent": row[3],
+                "payment_type": row[4]
+            })
+        collection.insert_many(data)
+        st.success("Entry saved to the database!")
 
 # %% 
-# Plots  
-st.subheader('Summary Plots')
+
+# Retrieve data from MongoDB
+data = list(collection.find())
+
+# Convert data to Pandas DataFrame
+df = pd.DataFrame(data)
+
+st.title("Data Visualization")
+
+# Display the DataFrame
+if st.checkbox('Show data:'):
+    st.subheader('MongoDB data')
+    st.write(df.head())
 
 col1, col2 = st.columns(2)
 
-with col1:
-    st.subheader("Total Amount Spent Over Time")
-    st.line_chart(res['Amount_Spent'], use_container_width=True)
-
+with col1:  
+    # Example plot using Matplotlib
+    st.write("Total Amount Spent Over Time")
+    st.line_chart(df, x= 'date', y='amount_spent', use_container_width=True)
 with col2:
-    st.header("Total Spending by Type")
-    ty_plot = res['Type'].value_counts()
-    st.bar_chart(ty_plot)
+    st.write("Total Spending by Type")
+    type_plot = df['type_spending'].value_counts()
+    st.bar_chart(type_plot, use_container_width=True)
 
+st.set_option('deprecation.showPyplotGlobalUse', False)
+st.pyplot()
 
 # %% 
 ### Selecting time period for monthly aggregation and reducing dataframe to df to prepare for time series model
-spent_by_month = res.resample('M').sum()
 
 # %%
 # df = res.reset_index()
@@ -105,90 +147,3 @@ spent_by_month = res.resample('M').sum()
 #     fig = fig.add_trace(go.Scatter(x=df2["Date "], y=df2["Amount Spent "], name=type))
 
 # st.plotly_chart(fig, use_container_width=True)
-# %% 
-
-# add section to input csv 
-st.title("CSV File Uploader")
-
-# File uploader
-uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
-
-if uploaded_file is not None:
-    # Read the CSV file
-    newdata = pd.read_csv(uploaded_file)
-
-    # Display the DataFrame
-    st.write(newdata)
-
-    # Process the DataFrame as needed
-    # Example: Display the first few rows
-    st.write("First 5 rows of the DataFrame:")
-    st.write(newdata.head())
-
-# %% 
-
-# New data inputs 
-st.title("New Entry")
-
-# Date input widget
-selected_date = st.date_input(
-    "Select a date",
-    value=datetime.date.today(),
-    min_value=datetime.date(2020, 1, 1),
-    max_value=datetime.date.today()
-)
-
-st.write(f"Selected date: {selected_date}")
-
-# Type of spending input dropdown 
-type_spending = st.selectbox("Type of spending", ['Groceries', 'Motives', 'Takeout', 'School', 'Misc.', 'Shopping', 'Gifts', 'Subscriptions', 'Travel'])
-st.write(f"Type of spending: {type_spending}")
-
-# Amount spent input 
-amount_spent = st.number_input("Amount spent", min_value=0.00, max_value=10000.00, value=0.00, step=0.01)
-st.write(f"Amount spent: ${amount_spent}")
-
-# toggle between credit or debit 
-payment_type = st.radio("Payment type", ['Credit', 'Debit'])
-st.write(f"Payment type: {payment_type}")
-
-# %% 
-# Add new entry to the database
-
-# Save data to MongoDB
-if st.button("Save Entry"):
-    data = {
-        "date": selected_date.isoformat(),
-        "type_spending": type_spending,
-        "amount_spent": amount_spent,
-        "payment_type": payment_type
-    }
-    collection.insert_one(data)
-    st.success("Entry saved to the database!")
-
-# %% 
-
-# Retrieve data from MongoDB
-data = list(collection.find())
-
-# Convert data to Pandas DataFrame
-df = pd.DataFrame(data)
-
-# Streamlit app
-st.title("Data Visualization")
-
-# Display the DataFrame
-st.write("Data from MongoDB:")
-st.write(df)
-
-# Plotting
-st.title("Graph")
-
-# Example plot using Matplotlib
-st.write("Example plot using Matplotlib:")
-plt.bar(df["type_spending"], df["amount_spent"])
-plt.xlabel("Type of Spending")
-plt.ylabel("Amount Spent")
-plt.title("Amount Spent by Type")
-st.set_option('deprecation.showPyplotGlobalUse', False)
-st.pyplot()
