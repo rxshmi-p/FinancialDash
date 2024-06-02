@@ -36,7 +36,7 @@ pyarrow
 pycparser
 pydeck
 Pygments
-pymongo
+pymongo==4.6.3
 pyparsing
 PySocks
 python-dateutil
