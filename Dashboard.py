@@ -33,6 +33,8 @@ def connect_db():
 
 collection = connect_db()
 
+st.write("Connected to MongoDB")
+
 # %% 
 
 # New data inputs 
