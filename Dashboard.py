@@ -102,7 +102,7 @@ if uploaded_file is not None:
 # %% 
 
 # Retrieve data from MongoDB
-data = list(collection.find())
+data = collection.find()
 
 # Convert data to Pandas DataFrame
 df = pd.DataFrame(data)
