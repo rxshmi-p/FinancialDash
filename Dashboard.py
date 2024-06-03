@@ -9,6 +9,7 @@ import os
 import datetime
 import pymongo 
 from pymongo.server_api import ServerApi
+import json
 
 # %% 
 # Page Configuration 
@@ -22,7 +23,6 @@ st.sidebar.success('Selection Panel')
 
 # %% 
 # Connect to MongoDB
-
 @st.cache_resource
 def connect_db():
     client = pymongo.MongoClient(
@@ -32,8 +32,6 @@ def connect_db():
     return db.financial_dash
 
 collection = connect_db()
-
-st.write("Connected to MongoDB")
 
 # %% 
 
@@ -106,6 +104,7 @@ data = collection.find()
 
 # Convert data to Pandas DataFrame
 df = pd.DataFrame(data)
+df['date'] = pd.to_datetime(df['date'])
 
 st.title("Data Visualization")
 
@@ -114,19 +113,33 @@ if st.checkbox('Show data:'):
     st.subheader('MongoDB data')
     st.write(df.head())
 
-col1, col2 = st.columns(2)
+st.write("## Select Date Range")
+start_date = st.date_input("Start date", datetime.date.today().replace(day=1))
+end_date = st.date_input("End date", datetime.date.today())
 
-with col1:  
-    # Example plot using Matplotlib
-    st.write("Total Amount Spent Over Time")
-    st.line_chart(df, x= 'date', y='amount_spent', use_container_width=True)
-with col2:
-    st.write("Total Spending by Type")
-    type_plot = df['type_spending'].value_counts()
-    st.bar_chart(type_plot, use_container_width=True)
+start_date = pd.to_datetime(start_date)
+end_date = pd.to_datetime(end_date)
 
-st.set_option('deprecation.showPyplotGlobalUse', False)
-st.pyplot()
+# Ensure the selected dates are in a valid range
+if start_date > end_date:
+    st.error("Error: End date must fall after start date.")
+else:
+
+    col1, col2 = st.columns(2)
+
+    with col1:  
+        st.subheader("Total Amount Spent Over Time")
+        # Filter DataFrame based on the selected date range
+        mask = (df['date'] >= start_date) & (df['date'] <= end_date)
+        filtered_df = df.loc[mask]
+        st.line_chart(filtered_df, x= 'date', y='amount_spent', use_container_width=True)
+
+    with col2:
+        st.subheader("Total Spending by Type")
+        # Filter DataFrame based on the selected date range
+        mask = (df['date'] >= start_date) & (df['date'] <= end_date)
+        filtered_df = df.loc[mask]
+        st.bar_chart(filtered_df, x='type_spending', y='amount_spent', use_container_width=True)
 
 # %% 
 ### Selecting time period for monthly aggregation and reducing dataframe to df to prepare for time series model
