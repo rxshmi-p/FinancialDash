@@ -1,5 +1,7 @@
 # Personal Finance Dashboard 🚀
 
+https://financialdash.streamlit.app/
+
 Welcome to my Personal Finance Dashboard. I created this tool with the aim of understanding of spending habits and predicting future spending! With this dynamic dashboard, you'll gain deep insights into your monthly expenditures and receive predictions for future spending, enabling you to create realistic budgets and cut unnecessary costs. 
 
 ## How It Works
@@ -9,7 +11,7 @@ Database Integration: Data is securely stored and managed in a MongoDB database,
 
 Predictive Modeling: Using time series Prophet model, monthly spending predictions are made, providing you with actionable insights to adjust your budget and save more.
 
-https://financialdash.streamlit.app/
+
 
 ## References 
 
