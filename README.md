@@ -1,10 +1,13 @@
-# Personal Finance Dashboard 
+# Personal Finance Dashboard 🚀
 
-The goal of this Personal Finance Dashboard is to have a better understanding of spending habits and predict future spending on a monthly basis. As a result, the aim of this insight is to have more realistic budgets and reduce spending where possible.
+Welcome to my Personal Finance Dashboard. I created this tool with the aim of understanding of spending habits and predicting future spending! With this dynamic dashboard, you'll gain deep insights into your monthly expenditures and receive predictions for future spending, enabling you to create realistic budgets and cut unnecessary costs. 
 
-## Background Info
+# How It Works
+Data Collection: I've compiled 2 year of personal spending data to analyze and visualize financial habits.
 
-I have created a Python based web application dashboard on Streamlit to gain better insight of my spending habits. This web app is using personal spending data that I have collected for 9 months to analyze and visualize spending patterns, as well as predict future spending. This dashboard connects to a database in MongoDB which manages historical and new inputted data. As well, it predicts average spending per month based on a time series Prophet model, which allows the user to know if their spending is predicted to be too high in a specific category.   
+Database Integration: Data is securely stored and managed in a MongoDB database, ensuring easy access and updates.
+
+Predictive Modeling: Using time series Prophet model, monthly spending predictions are made, providing you with actionable insights to adjust your budget and save more.
 
 https://financialdash.streamlit.app/
 
