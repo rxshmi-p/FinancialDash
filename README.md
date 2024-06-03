@@ -2,7 +2,7 @@
 
 Welcome to my Personal Finance Dashboard. I created this tool with the aim of understanding of spending habits and predicting future spending! With this dynamic dashboard, you'll gain deep insights into your monthly expenditures and receive predictions for future spending, enabling you to create realistic budgets and cut unnecessary costs. 
 
-# How It Works
+## How It Works
 Data Collection: I've compiled 2 year of personal spending data to analyze and visualize financial habits.
 
 Database Integration: Data is securely stored and managed in a MongoDB database, ensuring easy access and updates.
