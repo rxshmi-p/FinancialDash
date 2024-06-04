@@ -71,7 +71,7 @@ pycparser==2.21
 pydeck==0.8.1b0
 Pygments==2.16.1
 pymongo==4.7.2
-pyparsing==3.1.1
+pyparsing
 PySocks==1.7.1
 python-dateutil==2.8.2
 pytz==2023.3
