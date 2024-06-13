@@ -150,6 +150,8 @@ else:
         # Filter DataFrame based on the selected date range
         mask = (df['date'] >= start_date) & (df['date'] <= end_date)
         filtered_df = df.loc[mask]
+        # calculate sum spent per day
+        filtered_df = filtered_df.groupby('date', as_index=False)['amount_spent'].sum()
         st.line_chart(filtered_df, x= 'date', y='amount_spent', use_container_width=True)
 
     with col2:
