@@ -33,12 +33,14 @@ def connect_db():
 
 collection = connect_db()
 
+
 # %% 
+
 
 # New data inputs 
 st.subheader("New Entry")
 
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4, col5 = st.columns(5)
 
 with col1:
     # Date input widget
@@ -48,16 +50,20 @@ with col1:
         min_value=datetime.date(2020, 1, 1),
         max_value=datetime.date.today()
 )
-
+    
 with col2:  
+    # Type of spending input dropdown 
+    desc = st.text_input("Description", "Enter a description")
+
+with col3:  
     # Type of spending input dropdown 
     type_spending = st.selectbox("Type of spending", ['Groceries', 'Motives', 'Takeout', 'School', 'Misc.', 'Shopping', 'Gifts', 'Subscriptions', 'Travel'])
 
-with col3: 
+with col4: 
     # Amount spent input 
     amount_spent = st.number_input("Amount spent", min_value=0.00, max_value=10000.00, value=0.00, step=0.01)
 
-with col4:
+with col5:
     # toggle between credit or debit 
     payment_type = st.radio("Payment type", ['Credit', 'Debit'])
 
@@ -106,16 +112,28 @@ data = collection.find()
 df = pd.DataFrame(data)
 df['date'] = pd.to_datetime(df['date'])
 
+thismonth = df[(df['date'].dt.month == dt.now().month) & (df['date'].dt.year == dt.now().year)]
+
+st.subheader("Reminder!")
+col1, col2 = st.columns(2)
+with col1:
+    st.subheader("Budget this month: $2000")
+with col2:
+    st.subheader("Spent this month: $" + str(round(thismonth['amount_spent'].sum(),2)))
+
 st.title("Data Visualization")
 
 # Display the DataFrame
 if st.checkbox('Show data:'):
     st.subheader('MongoDB data')
-    st.write(df.head())
+    st.write(df.sort_values('date', ascending=False).head())
 
 st.write("## Select Date Range")
-start_date = st.date_input("Start date", datetime.date.today().replace(day=1))
-end_date = st.date_input("End date", datetime.date.today())
+col1, col2 = st.columns(2)
+with col1:
+    start_date = st.date_input("Start date", datetime.date.today().replace(day=1))
+with col2:
+    end_date = st.date_input("End date", datetime.date.today())
 
 start_date = pd.to_datetime(start_date)
 end_date = pd.to_datetime(end_date)
