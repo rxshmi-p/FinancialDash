@@ -142,6 +142,8 @@ end_date = pd.to_datetime(end_date)
 if start_date > end_date:
     st.error("Error: End date must fall after start date.")
 else:
+    st.write(f"Amount spent between {start_date} and {end_date}: ${df[(df['date'] >= start_date) & (df['date'] <= end_date)]['amount_spent'].sum()}")
+
 
     col1, col2 = st.columns(2)
 
