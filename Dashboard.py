@@ -135,14 +135,14 @@ with col1:
 with col2:
     end_date = st.date_input("End date", datetime.date.today())
 
-start_date = pd.to_datetime(start_date)
-end_date = pd.to_datetime(end_date)
+start_date = pd.to_datetime(start_date, format='%Y/%m/%d')
+end_date = pd.to_datetime(end_date, format='%Y-%m-%d')
 
 # Ensure the selected dates are in a valid range
 if start_date > end_date:
     st.error("Error: End date must fall after start date.")
 else:
-    st.write(f"Amount spent between {start_date} and {end_date}: ${df[(df['date'] >= start_date) & (df['date'] <= end_date)]['amount_spent'].sum()}")
+    st.write(f"Amount spent between {start_date.date()} and {end_date.date()}: <b>${round(df[(df['date'] >= start_date) & (df['date'] <= end_date)]['amount_spent'].sum(),2)}</b>", unsafe_allow_html=True)
 
 
     col1, col2 = st.columns(2)
